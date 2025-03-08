@@ -20,11 +20,12 @@ public class ProjectProdSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
-        http.requiresChannel(rcc->rcc.anyRequest().requiresSecure()) //only Https
+        http.sessionManagement(ssmc ->ssmc.invalidSessionUrl("/invalidSession"))
+                .requiresChannel(rcc->rcc.anyRequest().requiresSecure()) //only Https
                 .csrf(csrfConf->csrfConf.disable())
                 .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/myAccount", "/myCards", "/myLoans", "/myBalance").authenticated()
-                .requestMatchers("/contact", "/notices","/register").permitAll());
+                .requestMatchers("/contact", "/notices","/register", "/invalidSession").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(hbc->hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         http.exceptionHandling(ehc->ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
