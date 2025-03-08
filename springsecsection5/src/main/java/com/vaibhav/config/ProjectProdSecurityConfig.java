@@ -1,5 +1,7 @@
 package com.vaibhav.config;
 
+import com.vaibhav.exceptionhandling.CustomAccessDeniedHandler;
+import com.vaibhav.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,7 +26,8 @@ public class ProjectProdSecurityConfig {
                 .requestMatchers("/myAccount", "/myCards", "/myLoans", "/myBalance").authenticated()
                 .requestMatchers("/contact", "/notices","/register").permitAll());
         http.formLogin(withDefaults());
-        http.httpBasic(withDefaults());
+        http.httpBasic(hbc->hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+        http.exceptionHandling(ehc->ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
         return http.build();
     }
 
